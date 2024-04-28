@@ -17,7 +17,7 @@ import com.paraskcd.spendingtracker.utils.UUIDConverter
 
 @Database(
     entities = [CategoriesTable::class, SubcategoriesTable::class, ExpensesTable::class, IncomeTable::class, MainSettingsTable::class],
-    version = 3
+    version = 4
 )
 @TypeConverters(DateConverter::class, UUIDConverter::class)
 abstract class SpendingTrackerDatabase: RoomDatabase() {

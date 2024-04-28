@@ -10,6 +10,6 @@ import java.util.UUID
 data class MainSettingsTable(
     @PrimaryKey
     val id: UUID = UUID.randomUUID(),
-    val bankBalance: Long = 0,
+    val bankBalance: Float,
     val updated: Date = Date.from(Instant.now())
 )

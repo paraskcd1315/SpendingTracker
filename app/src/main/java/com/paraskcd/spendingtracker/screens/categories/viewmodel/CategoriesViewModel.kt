@@ -45,6 +45,9 @@ class CategoriesViewModel @Inject constructor(private val repository: Categories
         viewModelScope.launch(Dispatchers.IO) {
             getAllCategories()
         }
+        viewModelScope.launch(Dispatchers.IO) {
+            getAllSubcategories()
+        }
     }
 
     suspend fun getAllCategories() {

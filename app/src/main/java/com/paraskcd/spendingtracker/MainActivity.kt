@@ -31,6 +31,7 @@ import com.paraskcd.spendingtracker.screens.categories.SubcategoryDeleteDialog
 import com.paraskcd.spendingtracker.screens.categories.viewmodel.CategoriesViewModel
 import com.paraskcd.spendingtracker.screens.home.Home
 import com.paraskcd.spendingtracker.screens.settings.Settings
+import com.paraskcd.spendingtracker.screens.settings.viewmodel.SettingsViewModel
 import com.paraskcd.spendingtracker.ui.theme.SpendingTrackerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -45,6 +46,7 @@ class MainActivity : ComponentActivity() {
                 var showCategoryDeleteDialog by remember { mutableStateOf(false) }
                 var showSubcategoryDeleteDialog by remember { mutableStateOf(false) }
                 val navController = rememberNavController()
+                val settingsViewModel: SettingsViewModel = hiltViewModel()
                 val categoriesViewModel: CategoriesViewModel = hiltViewModel()
 
                 fun toggleDialog() {
@@ -116,7 +118,9 @@ class MainActivity : ComponentActivity() {
                             }
                             composable(route = "settings") {
                                 ScreenContainer(paddingValues = paddingValues) {
-                                    Settings()
+                                    Settings(
+                                        viewModel = settingsViewModel
+                                    )
                                 }
                             }
                         }

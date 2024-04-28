@@ -23,7 +23,7 @@ import java.util.UUID
 data class ExpensesTable(
     @PrimaryKey
     val id: UUID = UUID.randomUUID(),
-    val amount: Long,
+    val amount: Float,
     val entryDate: Date = Date.from(Instant.now()),
     val description: String?,
     @ColumnInfo(index = true)
