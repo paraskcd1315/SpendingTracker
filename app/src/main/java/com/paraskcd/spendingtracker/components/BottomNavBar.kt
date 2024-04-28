@@ -14,33 +14,32 @@ import com.paraskcd.spendingtracker.data.bottombarnavitems.BottomBarNavItems
 import com.paraskcd.spendingtracker.screens.categories.viewmodel.CategoriesViewModel
 
 @Composable
-fun BottomNavBar(navController: NavController, categoriesViewModel: CategoriesViewModel) {
-    NavigationBar {
-        val navBackStackEntry: NavBackStackEntry? by navController.currentBackStackEntryAsState()
-        val currentRoute: String? = navBackStackEntry?.destination?.route
-        val navBarItems: List<BottomBarNavItems> = listOf(BottomBarNavItems.Home, BottomBarNavItems.Categories, BottomBarNavItems.Settings)
-        val categoryById = categoriesViewModel.categoryById.collectAsState().value
+fun BottomNavBar(navController: NavController) {
+    val navBackStackEntry: NavBackStackEntry? by navController.currentBackStackEntryAsState()
+    val currentRoute: String? = navBackStackEntry?.destination?.route
+    val navBarItems: List<BottomBarNavItems> = listOf(BottomBarNavItems.Home, BottomBarNavItems.Categories, BottomBarNavItems.Settings)
 
-        navBarItems.forEach { item ->
-            NavigationBarItem(
-                selected = currentRoute == item.route,
-                onClick = {
-                    if (categoryById != null) {
-                        categoriesViewModel.resetCategoryById()
-                    }
-                    navController.navigate(item.route) {
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
-                    }
-                },
-                icon = {
-                    Icon(imageVector = item.icon, contentDescription = item.label)
-                },
-                label = {
-                    Text(text = item.label)
+    if (currentRoute != null) {
+        if (currentRoute.split('/').count() <= 1) {
+            NavigationBar {
+                navBarItems.forEach { item ->
+                    NavigationBarItem(
+                        selected = currentRoute == item.route,
+                        onClick = {
+                            navController.navigate(item.route) {
+                                popUpTo(navController.graph.startDestinationId)
+                                launchSingleTop = true
+                            }
+                        },
+                        icon = {
+                            Icon(imageVector = item.icon, contentDescription = item.label)
+                        },
+                        label = {
+                            Text(text = item.label)
+                        }
+                    )
                 }
-            )
+            }
         }
-
     }
 }

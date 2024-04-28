@@ -2,8 +2,11 @@ package com.paraskcd.spendingtracker.di
 
 import android.content.Context
 import androidx.room.Room
-import com.paraskcd.spendingtracker.data.categories.CategoryDatabase
+import com.paraskcd.spendingtracker.data.database.SpendingTrackerDatabase
 import com.paraskcd.spendingtracker.data.categories.CategoryDatabaseDao
+import com.paraskcd.spendingtracker.data.expense.ExpenseDatabaseDao
+import com.paraskcd.spendingtracker.data.income.IncomeDatabaseDao
+import com.paraskcd.spendingtracker.data.settings.SettingsDatabaseDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,9 +19,21 @@ import javax.inject.Singleton
 object AppModule {
     @Singleton
     @Provides
-    fun provideCategoryDatabaseDao(categoryDatabase: CategoryDatabase): CategoryDatabaseDao = categoryDatabase.categoryDao()
+    fun provideExpensesDatabaseDao(spendingTrackerDatabase: SpendingTrackerDatabase): ExpenseDatabaseDao = spendingTrackerDatabase.expenseDao()
 
     @Singleton
     @Provides
-    fun provideCategoryDatabase(@ApplicationContext context: Context): CategoryDatabase = Room.databaseBuilder(context, CategoryDatabase::class.java, "categoriesDB").fallbackToDestructiveMigration().build()
+    fun provideIncomeDatabaseDao(spendingTrackerDatabase: SpendingTrackerDatabase): IncomeDatabaseDao = spendingTrackerDatabase.incomeDao()
+
+    @Singleton
+    @Provides
+    fun provideSettingsDatabaseDao(spendingTrackerDatabase: SpendingTrackerDatabase): SettingsDatabaseDao = spendingTrackerDatabase.settingsDao()
+
+    @Singleton
+    @Provides
+    fun provideCategoryDatabaseDao(spendingTrackerDatabase: SpendingTrackerDatabase): CategoryDatabaseDao = spendingTrackerDatabase.categoryDao()
+
+    @Singleton
+    @Provides
+    fun provideDatabase(@ApplicationContext context: Context): SpendingTrackerDatabase = Room.databaseBuilder(context, SpendingTrackerDatabase::class.java, "spendingTrackerDB").fallbackToDestructiveMigration().build()
 }

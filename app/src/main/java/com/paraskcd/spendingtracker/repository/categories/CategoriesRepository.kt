@@ -17,4 +17,6 @@ class CategoriesRepository @Inject constructor(private val categoriesDatabaseDao
     suspend fun deleteSubcategory(subcategory: SubcategoriesTable) = categoriesDatabaseDao.delete(subcategory)
     fun getByCategoryId(id: String) = categoriesDatabaseDao.getByCategoryId(id).flowOn(Dispatchers.IO).conflate()
     fun getAllCategories() = categoriesDatabaseDao.getAll().flowOn(Dispatchers.IO).conflate()
+    fun getBySubcategoryId(id: String) = categoriesDatabaseDao.getSubcategoryById(id).flowOn(Dispatchers.IO).conflate()
+    fun getAllSubcategories() = categoriesDatabaseDao.getAllSubcategories().flowOn(Dispatchers.IO).conflate()
 }

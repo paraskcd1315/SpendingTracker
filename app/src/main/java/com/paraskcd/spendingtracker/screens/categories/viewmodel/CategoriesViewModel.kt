@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.paraskcd.spendingtracker.model.categories.CategoriesTable
 import com.paraskcd.spendingtracker.model.categories.CategoryAndSubcategories
 import com.paraskcd.spendingtracker.model.categories.SubcategoriesTable
+import com.paraskcd.spendingtracker.model.categories.SubcategoryAndCategory
 import com.paraskcd.spendingtracker.repository.categories.CategoriesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -16,16 +17,23 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import java.lang.Thread.State
 import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class CategoriesViewModel @Inject constructor(private val repository: CategoriesRepository): ViewModel() {
     private var _categoriesDatabase: MutableStateFlow<List<CategoryAndSubcategories>> = MutableStateFlow(emptyList())
-    var categoriesDatabase: StateFlow<List<CategoryAndSubcategories>> = _categoriesDatabase.asStateFlow();
+    var categoriesDatabase: StateFlow<List<CategoryAndSubcategories>> = _categoriesDatabase.asStateFlow()
+
+    private var _subcategoriesDatabase: MutableStateFlow<List<SubcategoryAndCategory>> = MutableStateFlow(emptyList())
+    var subcategoriesDatabase: StateFlow<List<SubcategoryAndCategory>> = _subcategoriesDatabase.asStateFlow()
 
     private var _categoryById: MutableStateFlow<CategoryAndSubcategories?> = MutableStateFlow(null)
     val categoryById: StateFlow<CategoryAndSubcategories?> = _categoryById.asStateFlow()
+
+    private var _subcategoryById: MutableStateFlow<SubcategoryAndCategory?> = MutableStateFlow(null)
+    val subcategoryById: StateFlow<SubcategoryAndCategory?> = _subcategoryById.asStateFlow()
 
     private var _selectDeleteCategory: MutableStateFlow<CategoriesTable?> = MutableStateFlow(null)
     val selectDeleteCategory: StateFlow<CategoriesTable?> = _selectDeleteCategory.asStateFlow()
@@ -50,6 +58,17 @@ class CategoriesViewModel @Inject constructor(private val repository: Categories
         }
     }
 
+    suspend fun getAllSubcategories() {
+        repository.getAllSubcategories().distinctUntilChanged().collect {
+            listOfAllSubcategories ->
+            if (listOfAllSubcategories.isEmpty()) {
+                _subcategoriesDatabase.value = emptyList()
+            } else {
+                _subcategoriesDatabase.value = listOfAllSubcategories
+            }
+        }
+    }
+
     fun getCategoryById(id: String) = viewModelScope.launch(Dispatchers.IO) {
         repository.getByCategoryId(id).distinctUntilChanged().collect {
                 catById ->
@@ -59,6 +78,21 @@ class CategoriesViewModel @Inject constructor(private val repository: Categories
                 _categoryById.value = null
             }
         }
+    }
+
+    fun getSubcategoryById(id: String) = viewModelScope.launch(Dispatchers.IO) {
+        repository.getBySubcategoryId(id).distinctUntilChanged().collect {
+            subcatById ->
+            if (subcatById != null) {
+                _subcategoryById.value = subcatById
+            } else {
+                _subcategoryById.value = null
+            }
+        }
+    }
+
+    fun resetSubcategoryById() {
+        _subcategoryById.value = null
     }
 
     fun resetCategoryById() {

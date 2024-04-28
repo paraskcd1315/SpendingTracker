@@ -74,8 +74,7 @@ class MainActivity : ComponentActivity() {
                     Scaffold(
                         bottomBar = {
                             BottomNavBar(
-                                navController = navController,
-                                categoriesViewModel = categoriesViewModel
+                                navController = navController
                             )
                         },
                         topBar = {
