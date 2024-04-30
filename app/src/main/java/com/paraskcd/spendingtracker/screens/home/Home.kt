@@ -54,6 +54,9 @@ fun Home(navController: NavController, settingsViewModel: SettingsViewModel) {
             }
         }
     } else {
+        val pattern = "d MMMM yyyy"
+        val simpleDateFormat = SimpleDateFormat(pattern, Locale.getDefault())
+
         val formatter = NumberFormat.getCurrencyInstance(Locale.getDefault())
         
         val setting = settingsDatabase[0]
@@ -67,7 +70,11 @@ fun Home(navController: NavController, settingsViewModel: SettingsViewModel) {
         }
 
         var perDaySpend by remember {
-            mutableStateOf((setting.bankBalance - setting.budget)/daysBetween)
+            if (setting.bankBalance > setting.budget) {
+                mutableStateOf((setting.bankBalance - setting.budget)/daysBetween)
+            } else {
+                mutableStateOf((setting.bankBalance)/daysBetween)
+            }
         }
 
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomEnd) {
@@ -77,8 +84,7 @@ fun Home(navController: NavController, settingsViewModel: SettingsViewModel) {
                     .padding(horizontal = 16.dp)
             ) {
                 item {
-                    val pattern = "d MMMM yyyy"
-                    val simpleDateFormat = SimpleDateFormat(pattern, Locale.getDefault())
+
 
                     Spacer(modifier = Modifier.padding(16.dp))
                     Text(

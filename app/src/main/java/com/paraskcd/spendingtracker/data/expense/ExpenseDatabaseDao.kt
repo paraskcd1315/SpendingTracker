@@ -10,7 +10,9 @@ import androidx.room.Update
 import com.paraskcd.spendingtracker.model.expenses.ExpenseAndSubcategory
 import com.paraskcd.spendingtracker.model.expenses.ExpensesTable
 import com.paraskcd.spendingtracker.model.expenses.SubcategoryAndExpenses
+import com.paraskcd.spendingtracker.model.incomes.IncomeAndSubcategory
 import kotlinx.coroutines.flow.Flow
+import java.util.Date
 
 @Dao
 interface ExpenseDatabaseDao {
@@ -25,6 +27,10 @@ interface ExpenseDatabaseDao {
     @Transaction
     @Query("SELECT * FROM expenses WHERE id = :id")
     fun getByExpenseId(id: String): Flow<ExpenseAndSubcategory>
+
+    @Transaction
+    @Query("SELECT * FROM expenses WHERE entryDate BETWEEN :from AND :to")
+    fun getByExpenseEntryDate(from: Date, to: Date): Flow<List<ExpenseAndSubcategory>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun save(expense: ExpensesTable)

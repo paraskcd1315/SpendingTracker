@@ -6,6 +6,7 @@ import com.paraskcd.spendingtracker.data.database.SpendingTrackerDatabase
 import com.paraskcd.spendingtracker.data.categories.CategoryDatabaseDao
 import com.paraskcd.spendingtracker.data.expense.ExpenseDatabaseDao
 import com.paraskcd.spendingtracker.data.income.IncomeDatabaseDao
+import com.paraskcd.spendingtracker.data.products.ProductsDatabaseDao
 import com.paraskcd.spendingtracker.data.settings.SettingsDatabaseDao
 import dagger.Module
 import dagger.Provides
@@ -28,6 +29,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideSettingsDatabaseDao(spendingTrackerDatabase: SpendingTrackerDatabase): SettingsDatabaseDao = spendingTrackerDatabase.settingsDao()
+
+    @Singleton
+    @Provides
+    fun provideProductsDatabaseDao(spendingTrackerDatabase: SpendingTrackerDatabase): ProductsDatabaseDao = spendingTrackerDatabase.productsDao()
 
     @Singleton
     @Provides
