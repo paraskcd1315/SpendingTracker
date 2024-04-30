@@ -11,5 +11,6 @@ data class MainSettingsTable(
     @PrimaryKey
     val id: UUID = UUID.randomUUID(),
     val bankBalance: Float,
+    val budget: Float,
     val updated: Date = Date.from(Instant.now())
 )

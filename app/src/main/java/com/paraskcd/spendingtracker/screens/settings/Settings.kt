@@ -1,5 +1,6 @@
 package com.paraskcd.spendingtracker.screens.settings
 
+import android.icu.number.NumberFormatter
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.paraskcd.spendingtracker.model.settings.MainSettingsTable
 import com.paraskcd.spendingtracker.screens.settings.viewmodel.SettingsViewModel
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.Date
@@ -43,12 +45,22 @@ fun Settings(viewModel: SettingsViewModel) {
             mutableStateOf(settings[0].bankBalance)
         }
     }
+    var budget by remember {
+        if (settings.isEmpty()) {
+            mutableStateOf(0.00f)
+        } else {
+            mutableStateOf(settings[0].budget)
+        }
+    }
 
     if (settings.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomEnd) {
             LazyColumn(modifier = Modifier
                 .fillMaxHeight()
                 .padding(horizontal = 16.dp)) {
+                item {
+                    Spacer(modifier = Modifier.padding(16.dp))
+                }
                 item {
                     Text(text = "Enter below the Bank Balance you've got right now, you probably wont have to look anymore once you put the Data.")
                 }
@@ -73,9 +85,36 @@ fun Settings(viewModel: SettingsViewModel) {
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
                 }
+                item {
+                    Spacer(modifier = Modifier.padding(16.dp))
+                }
+                item {
+                    Text(text = "Enter below the budget you want to maintain.")
+                }
+                item {
+                    Spacer(modifier = Modifier.padding(16.dp))
+                }
+                item {
+                    TextField(
+                        label = { Text(text = "Budget") },
+                        value = budget.toString(),
+                        onValueChange = {
+                            budget = it.toFloat()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        ),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
+                }
             }
             Column(Modifier.padding(16.dp)) {
-                Button(onClick = { viewModel.saveSetting(MainSettingsTable(bankBalance = accountBalance)) }) {
+                Button(onClick = { viewModel.saveSetting(MainSettingsTable(bankBalance = accountBalance, budget = budget)) }) {
                     Text("Save")
                 }
             }
@@ -83,9 +122,14 @@ fun Settings(viewModel: SettingsViewModel) {
     } else {
         val setting = settings[0]
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomEnd) {
-            LazyColumn(modifier = Modifier
+            LazyColumn(
+                modifier = Modifier
                 .fillMaxHeight()
-                .padding(horizontal = 16.dp)) {
+                .padding(horizontal = 16.dp)
+            ) {
+                item {
+                    Spacer(modifier = Modifier.padding(16.dp))
+                }
                 item {
                     Text(text = "Enter below the Bank Balance you've got right now, this will update the data if there are any inconsistencies.")
                 }
@@ -98,6 +142,33 @@ fun Settings(viewModel: SettingsViewModel) {
                         value = accountBalance.toString(),
                         onValueChange = {
                             accountBalance = it.toFloat()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        ),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
+                }
+                item {
+                    Spacer(modifier = Modifier.padding(16.dp))
+                }
+                item {
+                    Text(text = "Enter below the budget you want to maintain.")
+                }
+                item {
+                    Spacer(modifier = Modifier.padding(16.dp))
+                }
+                item {
+                    TextField(
+                        label = { Text(text = "Budget") },
+                        value = budget.toString(),
+                        onValueChange = {
+                            budget = it.toFloat()
                         },
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -127,6 +198,7 @@ fun Settings(viewModel: SettingsViewModel) {
                             MainSettingsTable(
                                 id = setting.id,
                                 bankBalance = accountBalance,
+                                budget = budget,
                                 updated = Date.from(Instant.now())
                             )
                         )

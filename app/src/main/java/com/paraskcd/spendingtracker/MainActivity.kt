@@ -93,7 +93,10 @@ class MainActivity : ComponentActivity() {
                         ){
                             composable(route = "home") {
                                 ScreenContainer(paddingValues = paddingValues) {
-                                    Home()
+                                    Home(
+                                        navController = navController,
+                                        settingsViewModel = settingsViewModel
+                                    )
                                 }
                             }
                             composable(route = "categories") {

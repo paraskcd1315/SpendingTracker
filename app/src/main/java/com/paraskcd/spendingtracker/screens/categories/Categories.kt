@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.paraskcd.spendingtracker.screens.categories.viewmodel.CategoriesViewModel
 import com.paraskcd.spendingtracker.utils.imageVectorFromString
@@ -57,12 +58,14 @@ fun Categories(toggleDialog: () -> Unit, navController: NavController, viewModel
             contentAlignment = Alignment.Center
         ) {
             Button(onClick = { toggleDialog() }) {
-                Text(text = "Add a category")
+                Text(text = "Add a category", fontSize = 24.sp)
             }
         }
     } else {
         LazyColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
             items(categories) {categoryData ->
+                Spacer(modifier = Modifier.padding(8.dp))
+
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -82,7 +85,8 @@ fun Categories(toggleDialog: () -> Unit, navController: NavController, viewModel
                         Text(text = categoryData.category.name)
                     }
                 }
-
+            }
+            item {
                 Spacer(modifier = Modifier.padding(8.dp))
             }
         }
