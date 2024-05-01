@@ -21,8 +21,8 @@ import java.util.UUID
 data class ProductsTable(
     @PrimaryKey
     val id: UUID = UUID.randomUUID(),
-    val name: String,
-    val price: Float,
+    var name: String,
+    var price: Float,
     @ColumnInfo(index = true)
     val subcategoryId: UUID
 )

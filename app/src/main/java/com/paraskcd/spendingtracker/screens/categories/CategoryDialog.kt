@@ -70,7 +70,7 @@ fun CategoryDialog(toggleDialog: () -> Unit, viewModel: CategoriesViewModel, tog
                 Box(
                     modifier = Modifier
                         .clickable { selectedTab = 0 }
-                        .padding(16.dp)
+                        .padding(20.dp)
                 ) {
                     Text("Category")
                 }
@@ -78,7 +78,7 @@ fun CategoryDialog(toggleDialog: () -> Unit, viewModel: CategoriesViewModel, tog
                     Box(
                         modifier = Modifier
                             .clickable { selectedTab = 1 }
-                            .padding(16.dp)
+                            .padding(20.dp)
                     ) {
                         Text("Subcategory")
                     }

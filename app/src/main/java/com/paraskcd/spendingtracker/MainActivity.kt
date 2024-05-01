@@ -30,6 +30,8 @@ import com.paraskcd.spendingtracker.screens.categories.CategoryDialog
 import com.paraskcd.spendingtracker.screens.categories.SubcategoryDeleteDialog
 import com.paraskcd.spendingtracker.screens.categories.viewmodel.CategoriesViewModel
 import com.paraskcd.spendingtracker.screens.home.Home
+import com.paraskcd.spendingtracker.screens.home.HomeDialog
+import com.paraskcd.spendingtracker.screens.home.viewmodel.HomeViewModel
 import com.paraskcd.spendingtracker.screens.settings.Settings
 import com.paraskcd.spendingtracker.screens.settings.viewmodel.SettingsViewModel
 import com.paraskcd.spendingtracker.ui.theme.SpendingTrackerTheme
@@ -46,6 +48,7 @@ class MainActivity : ComponentActivity() {
                 var showCategoryDeleteDialog by remember { mutableStateOf(false) }
                 var showSubcategoryDeleteDialog by remember { mutableStateOf(false) }
                 val navController = rememberNavController()
+                val homeViewModel: HomeViewModel = hiltViewModel()
                 val settingsViewModel: SettingsViewModel = hiltViewModel()
                 val categoriesViewModel: CategoriesViewModel = hiltViewModel()
 
@@ -95,7 +98,8 @@ class MainActivity : ComponentActivity() {
                                 ScreenContainer(paddingValues = paddingValues) {
                                     Home(
                                         navController = navController,
-                                        settingsViewModel = settingsViewModel
+                                        settingsViewModel = settingsViewModel,
+                                        homeViewModel = homeViewModel
                                     )
                                 }
                             }
@@ -141,6 +145,14 @@ class MainActivity : ComponentActivity() {
                                 viewModel = categoriesViewModel
                             )
                         } else {
+                            if (navController.currentDestination?.route?.split('/')?.get(0)?.equals(BottomBarNavItems.Home.route) == true) {
+                                HomeDialog(
+                                    toggleDialog = { toggleDialog() },
+                                    homeViewModel = homeViewModel,
+                                    categoriesViewModel = categoriesViewModel,
+                                    settingsViewModel = settingsViewModel
+                                )
+                            }
                             if (navController.currentDestination?.route?.split('/')?.get(0)?.equals(BottomBarNavItems.Categories.route) == true) {
                                 CategoryDialog(
                                     toggleDialog = { toggleDialog() },

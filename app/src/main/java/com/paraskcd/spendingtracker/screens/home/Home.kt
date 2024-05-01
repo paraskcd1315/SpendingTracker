@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.paraskcd.spendingtracker.data.bottombarnavitems.BottomBarNavItems
+import com.paraskcd.spendingtracker.model.settings.MainSettingsTable
+import com.paraskcd.spendingtracker.screens.home.viewmodel.HomeViewModel
 import com.paraskcd.spendingtracker.screens.settings.viewmodel.SettingsViewModel
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -41,8 +43,10 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun Home(navController: NavController, settingsViewModel: SettingsViewModel) {
+fun Home(navController: NavController, settingsViewModel: SettingsViewModel, homeViewModel: HomeViewModel) {
     val settingsDatabase = settingsViewModel.settingsDatabase.collectAsState().value
+    val expensesDatabase = homeViewModel.expensesDatabase.collectAsState().value
+
     if (settingsDatabase.isEmpty()) {
         Box(
             modifier = Modifier
@@ -59,8 +63,6 @@ fun Home(navController: NavController, settingsViewModel: SettingsViewModel) {
 
         val formatter = NumberFormat.getCurrencyInstance(Locale.getDefault())
         
-        val setting = settingsDatabase[0]
-        
         val today = LocalDate.now()
         val endOfMonth = today.withDayOfMonth(today.lengthOfMonth())
         var daysBetween = ChronoUnit.DAYS.between(today, endOfMonth)
@@ -70,10 +72,14 @@ fun Home(navController: NavController, settingsViewModel: SettingsViewModel) {
         }
 
         var perDaySpend by remember {
-            if (setting.bankBalance > setting.budget) {
-                mutableStateOf((setting.bankBalance - setting.budget)/daysBetween)
+            mutableStateOf(0.00f)
+        }
+
+        LaunchedEffect(key1 = settingsDatabase) {
+            if (settingsDatabase[0].bankBalance > settingsDatabase[0].budget) {
+                perDaySpend = (settingsDatabase[0].bankBalance - settingsDatabase[0].budget)/daysBetween
             } else {
-                mutableStateOf((setting.bankBalance)/daysBetween)
+                perDaySpend = (settingsDatabase[0].bankBalance)/daysBetween
             }
         }
 
@@ -84,8 +90,6 @@ fun Home(navController: NavController, settingsViewModel: SettingsViewModel) {
                     .padding(horizontal = 16.dp)
             ) {
                 item {
-
-
                     Spacer(modifier = Modifier.padding(16.dp))
                     Text(
                         text = simpleDateFormat.format(Date.from(Instant.now())),
@@ -104,6 +108,20 @@ fun Home(navController: NavController, settingsViewModel: SettingsViewModel) {
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
                     ) {
+                        Spacer(modifier = Modifier.padding(8.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Daily Limit",
+                                textAlign = TextAlign.Center,
+                                fontSize = 18.sp,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            )
+                        }
+                        Spacer(modifier = Modifier.padding(8.dp))
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
@@ -115,9 +133,9 @@ fun Home(navController: NavController, settingsViewModel: SettingsViewModel) {
                                 fontSize = 48.sp,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(48.dp)
                             )
                         }
+                        Spacer(modifier = Modifier.padding(8.dp))
                     }
                 }
             }

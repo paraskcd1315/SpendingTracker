@@ -80,6 +80,7 @@ fun CategoryById(toggleDialog: () -> Unit, navController: NavController, viewMod
             LazyColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
                 items(categoryById.subcategories) { subcategory ->
                     Column {
+                        Spacer(modifier = Modifier.padding(8.dp))
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -98,9 +99,7 @@ fun CategoryById(toggleDialog: () -> Unit, navController: NavController, viewMod
                                 Text(text = subcategory.name)
                             }
                         }
-                        Spacer(modifier = Modifier.padding(8.dp))
                     }
-
                 }
             }
         }

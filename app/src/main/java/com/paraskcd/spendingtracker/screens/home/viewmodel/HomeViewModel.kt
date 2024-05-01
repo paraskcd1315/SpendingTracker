@@ -3,10 +3,13 @@ package com.paraskcd.spendingtracker.screens.home.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paraskcd.spendingtracker.model.expenses.ExpenseAndSubcategory
+import com.paraskcd.spendingtracker.model.expenses.ExpensesTable
 import com.paraskcd.spendingtracker.model.expenses.SubcategoryAndExpenses
 import com.paraskcd.spendingtracker.model.incomes.IncomeAndSubcategory
+import com.paraskcd.spendingtracker.model.incomes.IncomeTable
 import com.paraskcd.spendingtracker.model.incomes.SubcategoryAndIncomes
 import com.paraskcd.spendingtracker.model.products.ProductAndSubcategory
+import com.paraskcd.spendingtracker.model.products.ProductsTable
 import com.paraskcd.spendingtracker.model.products.SubcategoryAndProducts
 import com.paraskcd.spendingtracker.repository.expenses.ExpensesRepository
 import com.paraskcd.spendingtracker.repository.income.IncomeRepository
@@ -146,5 +149,17 @@ class HomeViewModel @Inject constructor(private val productsRepository: Products
                 _productById.value = product
             }
         }
+    }
+
+    fun addExpense(expense: ExpensesTable) = viewModelScope.launch(Dispatchers.IO) {
+        expensesRepository.saveExpense(expense)
+    }
+
+    fun addIncome(income: IncomeTable) = viewModelScope.launch(Dispatchers.IO) {
+        incomeRepository.saveIncome(income)
+    }
+
+    fun addProduct(product: ProductsTable) = viewModelScope.launch(Dispatchers.IO) {
+        productsRepository.saveProduct(product)
     }
 }

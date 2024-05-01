@@ -17,7 +17,11 @@ import com.paraskcd.spendingtracker.screens.categories.viewmodel.CategoriesViewM
 fun BottomNavBar(navController: NavController) {
     val navBackStackEntry: NavBackStackEntry? by navController.currentBackStackEntryAsState()
     val currentRoute: String? = navBackStackEntry?.destination?.route
-    val navBarItems: List<BottomBarNavItems> = listOf(BottomBarNavItems.Home, BottomBarNavItems.Categories, BottomBarNavItems.Settings)
+    val navBarItems: List<BottomBarNavItems> = listOf(
+        BottomBarNavItems.Home,
+        BottomBarNavItems.Categories,
+        BottomBarNavItems.Settings
+    )
 
     if (currentRoute != null) {
         if (currentRoute.split('/').count() <= 1) {
