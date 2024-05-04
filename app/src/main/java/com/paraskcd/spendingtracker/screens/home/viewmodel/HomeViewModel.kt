@@ -29,8 +29,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val productsRepository: ProductsRepository, private val incomeRepository: IncomeRepository, private val expensesRepository: ExpensesRepository): ViewModel() {
-    private val fromDate: Date = Date.from(Instant.now().minus(1, ChronoUnit.DAYS))
-    private val toDate: Date = Date.from(Instant.now().plus(1, ChronoUnit.DAYS))
+    private val fromDate: Date = Date.from(Instant.now().truncatedTo(ChronoUnit.DAYS))
+    private val toDate: Date = Date.from(Instant.now().truncatedTo(ChronoUnit.DAYS).plus(1, ChronoUnit.DAYS))
 
     private var _incomeDatabase: MutableStateFlow<List<IncomeAndSubcategory>> = MutableStateFlow(emptyList())
     var incomeDatabase: StateFlow<List<IncomeAndSubcategory>> = _incomeDatabase.asStateFlow()
