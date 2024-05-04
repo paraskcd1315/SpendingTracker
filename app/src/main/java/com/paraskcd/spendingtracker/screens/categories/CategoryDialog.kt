@@ -356,3 +356,132 @@ fun CategoryDialog(toggleDialog: () -> Unit, viewModel: CategoriesViewModel, tog
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SubcategoryDialog(toggleDialog: () -> Unit, viewModel: CategoriesViewModel, toggleSubcategoryDeleteDialog: () -> Unit) {
+    val subcategoryById = viewModel.subcategoryById.collectAsState().value
+    val categories = viewModel.categoriesDatabase.collectAsState().value
+    val categoryById = viewModel.categoryById.collectAsState().value
+
+    if (subcategoryById != null && categoryById != null) {
+        DialogContainer(toggleDialog = { toggleDialog() }) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                var name: String by remember {
+                    mutableStateOf(subcategoryById.subcategory.name)
+                }
+                var categoryId: UUID? by remember {
+                    mutableStateOf(subcategoryById.subcategory.id)
+                }
+                var categoryName: String by remember {
+                    mutableStateOf(subcategoryById.category.name)
+                }
+                var dropdownExpanded: Boolean by remember {
+                    mutableStateOf(false)
+                }
+                Text("Enter details for a Subcategory: ")
+                Spacer(modifier = Modifier.padding(8.dp))
+                TextField(
+                    label = { Text(text = "Subcategory Name" ) },
+                    placeholder = { Text(text = "Enter Subcategory Name") },
+                    value = name,
+                    onValueChange = { value -> name = value },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    )
+                )
+                Spacer(modifier = Modifier.padding(8.dp))
+                ExposedDropdownMenuBox(
+                    expanded = dropdownExpanded,
+                    onExpandedChange = { change -> dropdownExpanded = change }
+                ) {
+                    TextField(
+                        label = { Text(text = "Category") },
+                        value = categoryName,
+                        onValueChange = {},
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropdownExpanded) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        )
+                    )
+                    ExposedDropdownMenu(
+                        expanded = dropdownExpanded,
+                        onDismissRequest = { dropdownExpanded = false }
+                    ) {
+                        categories.forEach { categoryData ->
+                            DropdownMenuItem(
+                                text = {
+                                    Row(
+                                        horizontalArrangement = Arrangement.Start,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = imageVectorFromString(iconName = categoryData.category.iconName),
+                                            contentDescription = categoryData.category.iconName
+                                        )
+                                        Spacer(modifier = Modifier.padding(8.dp))
+                                        Text(text = categoryData.category.name)
+                                    }
+                                },
+                                onClick = {
+                                    categoryName = categoryData.category.name
+                                    categoryId = categoryData.category.id
+                                    dropdownExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.padding(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = { toggleDialog() }) {
+                        Text(text = "Cancel")
+                    }
+                    Button(
+                        onClick = {
+                            viewModel.selectDeleteSubcategory(
+                                category = categoryById,
+                                subcategoryId = subcategoryById.subcategory.id
+                            )
+                            toggleSubcategoryDeleteDialog()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                            contentColor = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                    ) {
+                        Text(text = "Delete")
+                    }
+                    Spacer(modifier = Modifier.padding(8.dp))
+                    Spacer(modifier = Modifier.padding(8.dp))
+                    Button(onClick = {
+                        if (categoryId != null) {
+                            viewModel.editSubcategory(SubcategoriesTable(
+                                id = subcategoryById.subcategory.id,
+                                name = name,
+                                categoryId = categoryId!!
+                            ))
+                        }
+                        toggleDialog()
+                    }
+                    ) {
+                        Text(text = "Edit")
+                    }
+                }
+            }
+        }
+    }
+}

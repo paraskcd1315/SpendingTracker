@@ -45,7 +45,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CategoryById(toggleDialog: () -> Unit, navController: NavController, viewModel: CategoriesViewModel, toggleSubcategoryDeleteDialog: () -> Unit) {
+fun CategoryById(toggleDialog: () -> Unit, navController: NavController, viewModel: CategoriesViewModel, toggleSubcategoryEditDialog: () -> Unit) {
     val categoryById = viewModel.categoryById.collectAsState().value
 
     BackHandler {
@@ -85,11 +85,8 @@ fun CategoryById(toggleDialog: () -> Unit, navController: NavController, viewMod
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    viewModel.selectDeleteSubcategory(
-                                        category = categoryById,
-                                        subcategoryId = subcategory.id
-                                    )
-                                    toggleSubcategoryDeleteDialog()
+                                    viewModel.getSubcategoryById(id = subcategory.id.toString())
+                                    toggleSubcategoryEditDialog()
                                 },
                             shape = RoundedCornerShape(16.dp),
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),

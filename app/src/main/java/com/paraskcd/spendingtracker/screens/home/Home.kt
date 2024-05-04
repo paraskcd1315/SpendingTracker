@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,6 +47,7 @@ import java.util.Locale
 fun Home(navController: NavController, settingsViewModel: SettingsViewModel, homeViewModel: HomeViewModel) {
     val settingsDatabase = settingsViewModel.settingsDatabase.collectAsState().value
     val expensesDatabase = homeViewModel.expensesDatabase.collectAsState().value
+    val incomeDatabase = homeViewModel.incomeDatabase.collectAsState().value
 
     if (settingsDatabase.isEmpty()) {
         Box(
@@ -75,11 +77,48 @@ fun Home(navController: NavController, settingsViewModel: SettingsViewModel, hom
             mutableStateOf(0.00f)
         }
 
+        var spentToday by remember {
+            mutableStateOf(0.00f)
+        }
+
+        var earntToday by remember {
+            mutableStateOf(0.00f)
+        }
+
+        var bankBalance by remember {
+            mutableStateOf(0.00f)
+        }
+
+        var budget by remember {
+            mutableStateOf(0.00f)
+        }
+
         LaunchedEffect(key1 = settingsDatabase) {
             if (settingsDatabase[0].bankBalance > settingsDatabase[0].budget) {
                 perDaySpend = (settingsDatabase[0].bankBalance - settingsDatabase[0].budget)/daysBetween
             } else {
                 perDaySpend = (settingsDatabase[0].bankBalance)/daysBetween
+            }
+
+            bankBalance = settingsDatabase[0].bankBalance
+            budget = settingsDatabase[0].budget
+        }
+
+        LaunchedEffect(key1 = expensesDatabase) {
+            if (expensesDatabase.isNotEmpty()) {
+                spentToday = 0.0f
+                for (expenses in expensesDatabase) {
+                    spentToday += expenses.expense.amount
+                }
+            }
+        }
+
+        LaunchedEffect(key1 = incomeDatabase) {
+            if (incomeDatabase.isNotEmpty()) {
+                earntToday = 0.0f
+                for (income in incomeDatabase) {
+                    earntToday += income.income.amount
+                }
             }
         }
 
@@ -114,7 +153,7 @@ fun Home(navController: NavController, settingsViewModel: SettingsViewModel, hom
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                text = "Daily Limit",
+                                text = "Daily Expense Limit",
                                 textAlign = TextAlign.Center,
                                 fontSize = 18.sp,
                                 modifier = Modifier
@@ -132,11 +171,191 @@ fun Home(navController: NavController, settingsViewModel: SettingsViewModel, hom
                                 textAlign = TextAlign.Center,
                                 fontSize = 48.sp,
                                 modifier = Modifier
-                                    .fillMaxWidth()
+                                    .fillMaxWidth(),
+                                fontWeight = FontWeight.Black
                             )
                         }
                         Spacer(modifier = Modifier.padding(8.dp))
                     }
+                }
+                item {
+                    Spacer(modifier = Modifier.padding(16.dp))
+                }
+                item {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
+                    ) {
+                        Spacer(modifier = Modifier.padding(8.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Spent Today",
+                                textAlign = TextAlign.Center,
+                                fontSize = 18.sp,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            )
+                        }
+                        Spacer(modifier = Modifier.padding(8.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = formatter.format(spentToday),
+                                textAlign = TextAlign.Center,
+                                fontSize = 48.sp,
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                color = if (spentToday > perDaySpend) {
+                                    MaterialTheme.colorScheme.error
+                                } else {
+                                    MaterialTheme.colorScheme.primary
+                                },
+                                fontWeight = FontWeight.Black
+                            )
+                        }
+                        Spacer(modifier = Modifier.padding(8.dp))
+                    }
+                }
+                item {
+                    Spacer(modifier = Modifier.padding(16.dp))
+                }
+                item {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
+                    ) {
+                        Spacer(modifier = Modifier.padding(8.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Earned Today",
+                                textAlign = TextAlign.Center,
+                                fontSize = 18.sp,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            )
+                        }
+                        Spacer(modifier = Modifier.padding(8.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = formatter.format(earntToday),
+                                textAlign = TextAlign.Center,
+                                fontSize = 48.sp,
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                color = if (earntToday == 0f) {
+                                    MaterialTheme.colorScheme.onBackground
+                                } else if (earntToday > perDaySpend) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.error
+                                },
+                                fontWeight = FontWeight.Black
+                            )
+                        }
+                        Spacer(modifier = Modifier.padding(8.dp))
+                    }
+                }
+                item {
+                    Spacer(modifier = Modifier.padding(16.dp))
+                }
+                item {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
+                    ) {
+                        Spacer(modifier = Modifier.padding(8.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Balance",
+                                textAlign = TextAlign.Center,
+                                fontSize = 18.sp,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            )
+                        }
+                        Spacer(modifier = Modifier.padding(8.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = formatter.format(bankBalance),
+                                textAlign = TextAlign.Center,
+                                fontSize = 48.sp,
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                fontWeight = FontWeight.Black
+                            )
+                        }
+                        Spacer(modifier = Modifier.padding(8.dp))
+                    }
+                }
+                item {
+                    Spacer(modifier = Modifier.padding(16.dp))
+                }
+                item {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
+                    ) {
+                        Spacer(modifier = Modifier.padding(8.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Budget",
+                                textAlign = TextAlign.Center,
+                                fontSize = 18.sp,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            )
+                        }
+                        Spacer(modifier = Modifier.padding(8.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = formatter.format(budget),
+                                textAlign = TextAlign.Center,
+                                fontSize = 48.sp,
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                fontWeight = FontWeight.Black
+                            )
+                        }
+                        Spacer(modifier = Modifier.padding(8.dp))
+                    }
+                }
+                item {
+                    Spacer(modifier = Modifier.padding(16.dp))
                 }
             }
         }

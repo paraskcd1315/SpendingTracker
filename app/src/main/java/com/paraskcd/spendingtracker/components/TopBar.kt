@@ -38,6 +38,7 @@ fun TopBar(navController: NavController, toggleDialog: () -> Unit, categoriesVie
     val navBarItems: List<BottomBarNavItems> = listOf(
         BottomBarNavItems.Home,
         BottomBarNavItems.Categories,
+        BottomBarNavItems.Journal,
         BottomBarNavItems.Settings
     )
     val selectedNavBarItem = navBarItems.find { it.route == currentRoute }
@@ -104,7 +105,7 @@ fun TopBar(navController: NavController, toggleDialog: () -> Unit, categoriesVie
                     }
                 } else {
                     selectedNavBarItem?.label?.let {
-                        if (it != "Settings") {
+                        if (it != BottomBarNavItems.Settings.label && it != BottomBarNavItems.Journal.label) {
                             IconButton(
                                 onClick = { toggleDialog() }
                             ) {

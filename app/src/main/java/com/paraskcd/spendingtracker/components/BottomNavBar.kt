@@ -20,6 +20,7 @@ fun BottomNavBar(navController: NavController) {
     val navBarItems: List<BottomBarNavItems> = listOf(
         BottomBarNavItems.Home,
         BottomBarNavItems.Categories,
+        BottomBarNavItems.Journal,
         BottomBarNavItems.Settings
     )
 

@@ -1,5 +1,6 @@
 package com.paraskcd.spendingtracker.screens.home.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paraskcd.spendingtracker.model.expenses.ExpenseAndSubcategory
@@ -21,10 +22,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val productsRepository: ProductsRepository, private val incomeRepository: IncomeRepository, private val expensesRepository: ExpensesRepository): ViewModel() {
+    private val fromDate: Date = Date.from(Instant.now().minus(1, ChronoUnit.DAYS))
+    private val toDate: Date = Date.from(Instant.now().plus(1, ChronoUnit.DAYS))
+
     private var _incomeDatabase: MutableStateFlow<List<IncomeAndSubcategory>> = MutableStateFlow(emptyList())
     var incomeDatabase: StateFlow<List<IncomeAndSubcategory>> = _incomeDatabase.asStateFlow()
 
@@ -64,9 +71,10 @@ class HomeViewModel @Inject constructor(private val productsRepository: Products
         }
     }
 
-    suspend fun getAllIncomes() {
-        incomeRepository.getAllIncomes().distinctUntilChanged().collect {
+    private suspend fun getAllIncomes() {
+        incomeRepository.getByIncomeDateRange(from = fromDate, to = toDate).distinctUntilChanged().collect {
                 listOfAllIncomes ->
+            Log.d("Income", listOfAllIncomes.toList().toString())
             if (listOfAllIncomes.isEmpty()) {
                 _incomeDatabase.value = emptyList()
             } else {
@@ -75,9 +83,10 @@ class HomeViewModel @Inject constructor(private val productsRepository: Products
         }
     }
 
-    suspend fun getAllExpenses() {
-        expensesRepository.getAllExpenses().distinctUntilChanged().collect {
+    private suspend fun getAllExpenses() {
+        expensesRepository.getByExpenseDateRange(from = fromDate, to = toDate).distinctUntilChanged().collect {
             listOfAllExpenses ->
+            Log.d("Expenses", listOfAllExpenses.toList().toString())
             if (listOfAllExpenses.isEmpty()) {
                 _expensesDatabase.value = emptyList()
             } else {
@@ -86,7 +95,7 @@ class HomeViewModel @Inject constructor(private val productsRepository: Products
         }
     }
 
-    suspend fun getAllProducts() {
+    private suspend fun getAllProducts() {
         productsRepository.getAllProducts().distinctUntilChanged().collect {
             listOfAllProducts ->
             if (listOfAllProducts.isEmpty()) {

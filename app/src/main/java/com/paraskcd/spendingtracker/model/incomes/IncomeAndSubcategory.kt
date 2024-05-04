@@ -2,6 +2,7 @@ package com.paraskcd.spendingtracker.model.incomes
 
 import androidx.room.Embedded
 import androidx.room.Relation
+import com.paraskcd.spendingtracker.model.categories.CategoriesTable
 import com.paraskcd.spendingtracker.model.categories.SubcategoriesTable
 import com.paraskcd.spendingtracker.model.categories.SubcategoryAndCategory
 

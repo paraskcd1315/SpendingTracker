@@ -17,7 +17,7 @@ import java.util.Date
 @Dao
 interface ExpenseDatabaseDao {
     @Transaction
-    @Query("SELECT * FROM expenses")
+    @Query("SELECT * FROM expenses ORDER BY entryDate DESC")
     fun getAll(): Flow<List<ExpenseAndSubcategory>>
 
     @Transaction

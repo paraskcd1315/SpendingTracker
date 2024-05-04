@@ -28,10 +28,14 @@ import com.paraskcd.spendingtracker.screens.categories.CategoryById
 import com.paraskcd.spendingtracker.screens.categories.CategoryDeleteDialog
 import com.paraskcd.spendingtracker.screens.categories.CategoryDialog
 import com.paraskcd.spendingtracker.screens.categories.SubcategoryDeleteDialog
+import com.paraskcd.spendingtracker.screens.categories.SubcategoryDialog
 import com.paraskcd.spendingtracker.screens.categories.viewmodel.CategoriesViewModel
 import com.paraskcd.spendingtracker.screens.home.Home
 import com.paraskcd.spendingtracker.screens.home.HomeDialog
 import com.paraskcd.spendingtracker.screens.home.viewmodel.HomeViewModel
+import com.paraskcd.spendingtracker.screens.journal.Journal
+import com.paraskcd.spendingtracker.screens.journal.JournalDeleteDialog
+import com.paraskcd.spendingtracker.screens.journal.viewmodel.JournalViewModel
 import com.paraskcd.spendingtracker.screens.settings.Settings
 import com.paraskcd.spendingtracker.screens.settings.viewmodel.SettingsViewModel
 import com.paraskcd.spendingtracker.ui.theme.SpendingTrackerTheme
@@ -45,12 +49,15 @@ class MainActivity : ComponentActivity() {
             SpendingTrackerTheme {
                 // A surface container using the 'background' color from the theme
                 var showDialog by remember { mutableStateOf(false) }
+                var showSubcategoryEditDialog by remember { mutableStateOf(false) }
                 var showCategoryDeleteDialog by remember { mutableStateOf(false) }
                 var showSubcategoryDeleteDialog by remember { mutableStateOf(false) }
+                var showJournalDeleteDialog by remember { mutableStateOf(false) }
                 val navController = rememberNavController()
                 val homeViewModel: HomeViewModel = hiltViewModel()
                 val settingsViewModel: SettingsViewModel = hiltViewModel()
                 val categoriesViewModel: CategoriesViewModel = hiltViewModel()
+                val journalViewModel: JournalViewModel = hiltViewModel()
 
                 fun toggleDialog() {
                     showDialog = !showDialog
@@ -64,6 +71,16 @@ class MainActivity : ComponentActivity() {
                 fun toggleSubcategoryDeleteDialog() {
                     showSubcategoryDeleteDialog = !showSubcategoryDeleteDialog
                     showDialog = showSubcategoryDeleteDialog == true
+                }
+
+                fun toggleSubcategoryEditDialog() {
+                    showSubcategoryEditDialog = !showSubcategoryEditDialog
+                    showDialog = showSubcategoryEditDialog == true
+                }
+
+                fun toggleShowJournalDeleteDialog() {
+                    showJournalDeleteDialog = !showJournalDeleteDialog
+                    showDialog = showJournalDeleteDialog == true
                 }
 
                 Surface(
@@ -113,13 +130,21 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                             }
-                            composable(route = "categories/{categoryName}") { backstackEntry ->
+                            composable(route = "journal") {
+                                ScreenContainer(paddingValues = paddingValues) {
+                                    Journal(
+                                        viewModel = journalViewModel,
+                                        toggleShowJournalDeleteDialog = { toggleShowJournalDeleteDialog() }
+                                    )
+                                }
+                            }
+                            composable(route = "categories/{categoryName}") {
                                 ScreenContainer(paddingValues = paddingValues) {
                                     CategoryById(
                                         toggleDialog = { toggleDialog() },
                                         navController = navController,
                                         viewModel = categoriesViewModel,
-                                        toggleSubcategoryDeleteDialog = { toggleSubcategoryDeleteDialog() }
+                                        toggleSubcategoryEditDialog = { toggleSubcategoryEditDialog() }
                                     )
                                 }
                             }
@@ -143,6 +168,18 @@ class MainActivity : ComponentActivity() {
                             SubcategoryDeleteDialog(
                                 toggleDialog = { toggleSubcategoryDeleteDialog() },
                                 viewModel = categoriesViewModel
+                            )
+                        } else if (showSubcategoryEditDialog) {
+                            SubcategoryDialog(
+                                toggleDialog = { toggleSubcategoryEditDialog() },
+                                viewModel = categoriesViewModel,
+                                toggleSubcategoryDeleteDialog = { toggleSubcategoryDeleteDialog() }
+                            )
+                        } else if (showJournalDeleteDialog) {
+                            JournalDeleteDialog(
+                                toggleDialog = { toggleShowJournalDeleteDialog() },
+                                journalViewModel = journalViewModel,
+                                settingsViewModel = settingsViewModel
                             )
                         } else {
                             if (navController.currentDestination?.route?.split('/')?.get(0)?.equals(BottomBarNavItems.Home.route) == true) {
