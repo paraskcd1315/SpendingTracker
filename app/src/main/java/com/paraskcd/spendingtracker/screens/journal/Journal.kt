@@ -64,10 +64,6 @@ fun Journal(viewModel: JournalViewModel, toggleShowJournalDeleteDialog: () -> Un
         }
     }
 
-    LaunchedEffect(key1 = journal) {
-        Log.d("Journal", journal.toString())
-    }
-
     if (journal.isNotEmpty()) {
         LazyColumn {
             items(journal) {

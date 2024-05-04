@@ -74,7 +74,6 @@ class HomeViewModel @Inject constructor(private val productsRepository: Products
     private suspend fun getAllIncomes() {
         incomeRepository.getByIncomeDateRange(from = fromDate, to = toDate).distinctUntilChanged().collect {
                 listOfAllIncomes ->
-            Log.d("Income", listOfAllIncomes.toList().toString())
             if (listOfAllIncomes.isEmpty()) {
                 _incomeDatabase.value = emptyList()
             } else {
@@ -86,7 +85,6 @@ class HomeViewModel @Inject constructor(private val productsRepository: Products
     private suspend fun getAllExpenses() {
         expensesRepository.getByExpenseDateRange(from = fromDate, to = toDate).distinctUntilChanged().collect {
             listOfAllExpenses ->
-            Log.d("Expenses", listOfAllExpenses.toList().toString())
             if (listOfAllExpenses.isEmpty()) {
                 _expensesDatabase.value = emptyList()
             } else {

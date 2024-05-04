@@ -9,18 +9,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -43,12 +33,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.paraskcd.spendingtracker.components.DialogContainer
 import com.paraskcd.spendingtracker.data.dropdowniconlistitems.DropdownIconListItems
 import com.paraskcd.spendingtracker.model.categories.CategoriesTable
-import com.paraskcd.spendingtracker.model.categories.CategoryAndSubcategories
 import com.paraskcd.spendingtracker.model.categories.SubcategoriesTable
 import com.paraskcd.spendingtracker.screens.categories.viewmodel.CategoriesViewModel
 import com.paraskcd.spendingtracker.utils.imageVectorFromString
@@ -371,7 +358,7 @@ fun SubcategoryDialog(toggleDialog: () -> Unit, viewModel: CategoriesViewModel, 
                     mutableStateOf(subcategoryById.subcategory.name)
                 }
                 var categoryId: UUID? by remember {
-                    mutableStateOf(subcategoryById.subcategory.id)
+                    mutableStateOf(subcategoryById.category.id)
                 }
                 var categoryName: String by remember {
                     mutableStateOf(subcategoryById.category.name)
@@ -407,6 +394,7 @@ fun SubcategoryDialog(toggleDialog: () -> Unit, viewModel: CategoriesViewModel, 
                         modifier = Modifier
                             .fillMaxWidth()
                             .menuAnchor(),
+                        readOnly = true,
                         shape = RoundedCornerShape(16.dp),
                         colors = TextFieldDefaults.colors(
                             focusedIndicatorColor = Color.Transparent,
